@@ -1,4 +1,4 @@
-from sympy import Symbol, MutableDenseMatrix, Add, Mul, Integer, Matrix
+from sympy import Symbol, MutableDenseMatrix, Add, Mul, Integer, Matrix, Pow
 from oct2py import octave
 import pickle
 
@@ -16,32 +16,42 @@ import pickle
 
 print "DERIVATIVE VECTOR"
 #cmpnds = octave.derivative_vector('/home/ross/test.txt')
-compounds, l, r = octave.human_parser('/home/ross/test.txt')
+compounds, l, r = octave.human_parser('/home/casi/LocalControl/tt.txt')
 #print "First compound is: " + compounds[0]
 #print l
 #print r
+
+print l
+print r
 num_of_compounds = l.shape[0]
 num_of_reactions = l.shape[1]
 
+print num_of_compounds
+print num_of_reactions
+
 result2 = octave.derivative_vector2(l, r)
 #print result2.pickle
+print result2.pickle
 representation = eval(result2.pickle) #pickle.loads(result2.pickle)
 #print result2
 print "\n\n\n"
 
 # Check the number of elements
 
+print representation
 
+#dimensions = (1, 1)
+#if not hasattr(representation, 'shape'):
+#	representation = eval (Matrix(result2.pickle))
 
 dimensions = representation.shape
-
 #for x in range (0, dimensions[0]):
 #	print representation[x]
 #print representation[0]
 #print dimensions[0]
 
 
-filecontents = "CONFIG\nTRACKTYPE: 1;\nEND;\nINPUT\nvariable_group x_1"
+filecontents = "INPUT\nvariable_group x_1"
  # variable_group x, y;\nfunction f;\nf = x^6 + y - 1;\nEND;
 # Grab the variables
 for x in range (2, num_of_compounds+1):
@@ -68,7 +78,7 @@ for x in range(1, dimensions[0]):
 filecontents += ";\n"
 
 for x in range(0, dimensions[0]):
-	filecontents += "f_" + str(x) + " = " + str(representation[x]) + ";\n"
+	filecontents += "f_" + str(x) + " = " + (str(representation[x]).replace("**", "^")) + ";\n"
 
 filecontents += "\nEND;"
 
@@ -89,7 +99,7 @@ targetfile.write(filecontents)
 targetfile.close()
 
 from subprocess import call
-call(["./bertini", directory + filename])
+call(["./bertini/bertini", directory + filename])
 call(["rm", "-f", directory+filename])
 
 print "DONE."
