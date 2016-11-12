@@ -82,7 +82,16 @@ $standardTests = array(
 		array( 'stoichiometry+V' ),
 		$doesNotSupportIniFile
 	),
-
+	// Reduced Determinant
+	new NetworkTest
+	(
+		'reduced_determinant',
+		'Reduced Determinant',
+		'This calculates the reduced determinant of a CRN.', 
+		'reduced_determinant', // (i.e. the name of the binary or shell script in bin/ that belongs to this test)
+		array( 'human' ), // (supported file formats)
+		$doesNotSupportIniFile 
+	),
 	/*
 	// Add new tests here, in the following format:
 	new NetworkTest

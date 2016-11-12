@@ -1,0 +1,16 @@
+#!/bin/sh
+OCTAVE=$(which octave)
+if [ -z $OCTAVE ]
+then
+	echo "Error: octave binary not found"
+	exit 1
+fi
+if [ $# -ne 1 ]
+then
+	echo "Usage: reduced_determinant <filename>"
+	exit 2
+fi
+# Octave has a tendency to hang on large CRNs, which prevents it exiting when this wrapper script does.
+# To work around this, make sure to kill it if we reach the timeout.
+trap 'kill -KILL $(jobs -pr)' TERM
+echo "warning('off');reduced_determinant('$1', true);" | $OCTAVE --quiet --no-history --no-window-system
