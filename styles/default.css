@@ -1,0 +1,572 @@
+/**
+ * Default stylesheet for CoNtRol
+ *
+ * @author     Pete Donnell <pete-dot-donnell-at-port-dot-ac-dot-uk>
+ * @copyright  2012-2014 University of Portsmouth & Kitson Consulting Limited
+ * @license    https://gnu.org/licenses/gpl-3.0-standalone.html GPLv3 or later
+ * @see        https://reaction-networks.net/control/documentation/
+ * @package    CoNtRol
+ * @created    02/10/2012
+ * @modified   08/08/2014
+ */
+
+@media screen
+{
+	@font-face
+	{
+		font-family: 'Orbitron';
+		src: url('../fonts/orbitron-medium-webfont.eot'); /* IE9 Compat Modes */
+		src: url('../fonts/orbitron-medium-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+		     url('../fonts/orbitron-medium-webfont.woff') format('woff'), /* Modern Browsers */
+		     url('../fonts/orbitron-medium-webfont.ttf') format('truetype'); /* Safari, Android, iOS */
+		font-style: normal;
+		font-weight: normal;
+	}
+
+	@font-face
+	{
+		font-family: 'Orbitron';
+		src: url('../fonts/orbitron-bold-webfont.eot'); /* IE9 Compat Modes */
+		src: url('../fonts/orbitron-bold-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+		     url('../fonts/orbitron-bold-webfont.woff') format('woff'), /* Modern Browsers */
+		     url('../fonts/orbitron-bold-webfont.ttf') format('truetype'); /* Safari, Android, iOS */
+		font-style: normal;
+		font-weight: bold;
+	}
+
+	*
+	{
+		font-family: sans-serif;
+	}
+
+	body, html
+	{
+		height: 99.9%;
+		margin: 0;
+		padding: 0;
+	}
+
+	:link
+	{
+		text-decoration: none;
+		color: #666;
+	}
+
+	:link:hover
+	{
+		text-decoration: underline;
+	}
+
+	:visited
+	{
+		color: #333;
+	}
+
+	h1
+	{
+		display: inline-block;
+		font-size: 72px;
+		padding-left: 174px;
+		padding-top: 30px;
+	}
+
+	h1 > a
+	{
+		color: black;
+		font-family: Orbitron, sans-serif;
+	}
+
+	h1 > :link:hover
+	{
+		text-decoration: none;
+	}
+
+	noscript p
+	{
+		padding-left: 11em;
+		padding-bottom: 1em;
+	}
+
+	sup
+	{
+		font-size: smaller;
+		vertical-align: super;
+	}
+
+	.align_right
+	{
+	 	float: right;
+	}
+
+	a > img
+	{
+		vertical-align: text-top;
+	}
+
+	.bold
+	{
+		font-weight: bolder;
+	}
+
+	.button
+	{
+		background-color: #ddd;
+		border: 1px solid #999;
+		border-radius: 2px;
+		box-shadow: 1px 1px 1px #333;
+		color: black;
+		font-size: 100%;
+		padding: 2px 8px;
+		text-decoration: none;
+	}
+
+	.button:hover
+	{
+		background-color: #eee;
+		text-decoration: none;
+	}
+
+	.button.disabled
+	{
+		color: #bbb;
+		box-shadow: none;
+	}
+
+	.button.disabled:hover
+	{
+		background-color: #ddd;
+		cursor: default;
+	}
+
+	p.jump > span, p.jump > a
+	{
+		float:left;
+	}
+
+	p.jump > a.align_right
+	{
+		width: auto;
+	}
+
+	.left_centred
+	{
+		margin: auto;
+		text-align: left;
+		width: 28em;
+	}
+
+	.mobile
+	{
+		display: none;
+	}
+
+	.monospace
+	{
+		font-family: "Consolas Mono", monospace;
+	}
+
+	.scroll
+	{
+		overflow: auto;
+		margin-bottom: 2em;
+	}
+
+	.small
+	{
+		color: #333;
+		font-size: 75%;
+		font-style: italic;
+		padding-left: 1em;
+	}
+
+	th.test_checkboxes
+	{
+		cursor: pointer;
+	}
+
+	#actions_holder, #tools_holder
+	{
+		background-color: #666;
+		border: 1px solid #333;
+		position: absolute;
+		top: 121px;
+		min-width: 9em;
+	}
+
+	#actions_holder
+	{
+		right: 0.9em;
+	}
+
+	#actions_holder button
+	{
+		cursor: pointer;
+		margin: 0;
+		width: 100%;
+	}
+
+	#actions_holder button.disabled
+	{
+		cursor: default;
+	}
+
+	#actions_holder > h2, #tools_header > h2
+	{
+		color: #fff;
+		padding: 0.5em 0;
+	}
+
+	#actions_holder a, #actions_holder button, #tools_holder a
+	{
+		text-align: left;
+		background-repeat: no-repeat;
+		background-position: 5px;
+		border: none;
+		border-radius: 0;
+		box-shadow: none;
+		display:block;
+		padding: 0.3em 0.3em 0.3em 30px;
+	}
+
+	#add_reaction_button, #remove_reaction_button, #reset_reaction_button
+	{
+		display: inline-block;
+	}
+
+	#add_reaction_button, #reaction_input_form fieldset input, #reaction_input_form fieldset select, #remove_reaction_button, #reset_reaction_button, #submit_known_crn, #submitter
+	{
+		font-size: 150%;
+	}
+
+	#batch_security_code_label
+	{
+		font-family: Monaco, Consolas, 'Deja Vu Sans Mono', monospace;
+	}
+
+	#batch_upload_button
+	{
+		background-image: url('../images/batch.png');
+	}
+
+	#batch_upload_form, #reaction_input_form, #reaction_upload_form
+	{
+		padding: 1em 0;
+	}
+
+	#batch_upload_form p, #reaction_upload_form p
+	{
+		padding: 0.5em;
+	}
+
+	#calculation_output_holder p
+	{
+		font-size: 125%;
+		margin: 1em;
+		text-align: left;
+	}
+
+	#container
+	{
+		min-height: 100%;
+		position: relative;
+	}
+
+	#content
+	{
+		padding-bottom: 2em;
+	}
+
+	#credits
+	{
+		margin: 1em 0 1em 11em;
+	}
+
+	#credits > :link
+	{
+		margin: 0 0.2em;
+	}
+
+	#credits_hider, #popup_hider
+	{
+		height: 1px;
+		overflow: hidden;
+		visibility: hidden;
+	}
+
+	#credits_holder > *, #feedback_holder > *, #privacy_holder > *
+	{
+		margin: 0.5em 1em;
+	}
+
+	#credits_holder > h2, #feedback_holder > h2, #privacy_holder > h2
+	{
+		font-size: 150%;
+		margin-left: 0.6em;
+	}
+
+	#credits_holder > ul > li
+	{
+		padding: 0.2em 0.8em;
+	}
+
+	#crn_description
+	{
+		margin-bottom: 1em;
+	}
+
+	#download_network_file_button
+	{
+		background-image: url('../images/download.png');
+	}
+
+	#dsr_graph_button
+	{
+		background-image: url('../images/network.png');
+		background-repeat: no-repeat;
+		background-position: 7px;
+		padding-left: 30px;
+	}
+
+	#email_results_error
+	{
+		font-size: 80%;
+		color: red;
+	}
+
+	#email_results_form_button
+	{
+		background-image: url('../images/email.png');
+		background-repeat: no-repeat;
+		background-position: 7px;
+		padding-left: 30px;
+	}
+
+	#error_message_holder
+	{
+		color: red;
+		margin: 0 11em;
+	}
+
+	#error_message_holder p
+	{
+		margin-bottom: 0.5em;
+	}
+
+	#feedback_holder > p, #privacy_holder > p
+	{
+		line-height: 120%;
+		width: 400px;
+		padding: 0 0.8em;
+	}
+
+	#footer
+	{
+		bottom: 0;
+		height: 3em;
+		position: absolute;
+		width: 100%;
+	}
+
+	#header > h2
+	{
+		display: inline-block;
+		font-family: sans-serif;
+		font-size: 15px;
+		font-weight: normal;
+		margin-bottom: 32px;
+		margin-left: 2px;
+		padding-left: 0px;
+	}
+
+	#header > h2 > a
+	{
+		color: #999;
+	}
+
+	#header > h2 > :link:hover
+	{
+		text-decoration: none;
+	}
+
+	#hidden_character_warning, #missing_reactant_warning, #removed_reaction_warning
+	{
+		background-color: #EEE;
+		border: 1px solid #333;
+		box-shadow: 2px 2px #000;
+		display: none;
+		left: 100px;
+		padding: 4px;
+		position: absolute;
+		top: 100px;
+		z-index: 1;
+	}
+
+	#latex_output_button
+	{
+		background-image: url('../images/latex.png');
+	}
+
+	#latex_output_holder
+	{
+		margin-bottom: 0.5em;
+		margin-top: 1em;
+		text-align: center;
+	}
+
+	#latex_output_holder > textarea
+	{
+		font-size: 100%;
+		max-width: 95%;
+	}
+
+	#missing_java_warning_holder
+	{
+		padding: 1em;
+	}
+
+	#more_actions_slidedown, #tools_buttons_slidedown
+	{
+		display: none;
+	}
+
+	#more_actions_show, #tools_show
+	{
+		display: block;
+		cursor: pointer;
+		font-size: 80%;
+		background-color: #999;
+		color: #fff;
+		padding: 4px;
+	}
+
+	#option_holder
+	{
+		padding-bottom: 0.5em;
+	}
+
+	#option_holder > h3
+	{
+		margin: 0.7em 0;
+	}
+
+	#option_holder > table
+	{
+		margin: 1em 0 2em;
+	}
+
+	#option_holder > table td, #option_holder > table th
+	{
+		border: 1px solid #ccc;
+		padding: 0.3em;
+		text-align: left;
+	}
+
+	#option_holder > table th
+	{
+		background-color: #eee;
+	}
+
+	#options_button
+	{
+		background-image: url('../images/options.png');
+	}
+
+	#process_network_button
+	{
+		font-size: 120%;
+		background-image: url('../images/analyse.png');
+	}
+
+	#reaction_input_form, #reaction_input_holder, #reaction_upload_form
+	{
+		margin: auto;
+		text-align: center;
+	}
+
+	#reaction_input_form fieldset
+	{
+		padding-bottom: 1em;
+	}
+
+	#reaction_input_form fieldset textarea
+	{
+		width: 40%;
+	}
+
+	#reaction_input_holder
+	{
+		border: 1px dotted #999;
+		margin: 0 11em;
+	}
+
+	#reaction_input_holder p:first-child
+	{
+		margin-bottom: 1em;
+	}
+
+	#reaction_upload_button
+	{
+		background-image: url('../images/upload.png');
+	}
+
+	#results
+	{
+		margin: 0 11em 2em;
+	}
+
+	#results > div
+	{
+		border: 1px solid #ccc;
+		padding: 1em;
+	}
+
+	#results > div > pre
+	{
+		white-space: pre-wrap;
+	}
+
+	#results > div, #results > div > h4, #results > div > p, #results > div > pre
+	{
+		margin: 1em 0 0;
+	}
+
+	#results > h2
+	{
+		font-size: 140%;
+		margin-bottom: 1em;
+	}
+
+	#results > p.jump > :link
+	{
+		margin-right: 0.3em;
+		padding-left: 20px;
+		background-image: url('../images/analyse.png');
+		background-repeat: no-repeat;
+	}
+
+	#results_actions_buttons
+	{
+		margin-top: 2em;
+	}
+
+	#results_link
+	{
+		background-image: url('../images/return.png');
+	}
+
+	#submit_known_crn
+	{
+		margin: 1em auto 0.5em;
+	}
+
+	#tools_holder
+	{
+		left: 0.9em;
+	}
+
+	#upload_batch_file_email_error
+	{
+		color: red;
+		font-size: 80%;
+	}
+}

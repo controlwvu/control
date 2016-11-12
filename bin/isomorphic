@@ -1,0 +1,117 @@
+#!/usr/bin/env php
+<?php
+/**
+ * CoNtRol CRN graph isomorphism test
+ *
+ * Tests whether a given CRN is isomorphic to a CRN with known properties.
+ *
+ * @author     Pete Donnell <pete-dot-donnell-at-port-dot-ac-dot-uk>
+ * @author     Casian Pantea <cpantea-at-math-dot-wvu-dot-edu>
+ * @author     Murad Banaji <murad-dot-banaji-at-port-dot-ac-dot-uk>
+ * @copyright  2014 University of Portsmouth & Kitson Consulting Limited & West Virginia University
+ * @license    https://gnu.org/licenses/gpl-3.0-standalone.html GPLv3 or later
+ * @see        https://reaction-networks.net/control/documentation/
+ * @package    CoNtRol
+ * @created    14/07/2014
+ * @modified   09/08/2014
+ */
+
+/**
+ * Standard include
+ */
+require_once( '../includes/classes.php' );
+
+/**
+ * Standard include
+ */
+require_once( '../includes/config.php' );
+
+/**
+ * Standard include
+ */
+require_once( '../includes/functions.php' );
+
+// Check that this script was correctly invoked
+$stderr = fopen( 'php://stderr', 'w' );
+if( $argc == 2 )
+{
+	// Load the CRN from file
+	$filename = $argv[1];
+	if( $filename )
+	{
+		$fhandle = fopen( $filename, 'r' );
+		$reaction_network = new ReactionNetwork();
+		$error = false;
+		while( !feof( $fhandle ) )
+		{
+			$reactionString = fgets( $fhandle );
+			if( $reactionString and strpos( $reactionString, '#' ) !== 0 and strpos( $reactionString, '//' ) !== 0 )
+			{
+				$newReaction = Reaction::parseReaction( $reactionString );
+				if( $newReaction ) $reaction_network->addReaction( $newReaction );
+				elseif( !$error )
+				{
+					echo 'An error occurred while adding a reaction. Output may not be as expected.';
+					$error = true;
+				}
+			}
+		}
+		$temp_matrix = $reaction_network->generateIrreversibleStoichiometryMatrix();
+		$number_of_reactions = count( $temp_matrix[0] );
+		$number_of_species = count( $temp_matrix );
+		fwrite($stderr, 'Reactions: ' . $number_of_reactions . PHP_EOL );
+		fwrite($stderr, 'Species: ' . $number_of_species . PHP_EOL );
+
+		// Attempt to open the database and throw an exception if unable to do so
+		try
+		{
+			$controldb = new PDO( DB_STRING, DB_USER, DB_PASS, $db_options );
+		}
+		catch(PDOException $exception)
+		{
+			die( 'Unable to open database. Error: ' . str_replace( DB_PASS, '********', $exception ) . '. Please contact the system administrator at ' . hide_email_address( ADMIN_EMAIL ) . '.' );
+		}
+
+		// Look up known CRNs with the same number of reactions and species from the database to check isomorphism
+		$query = 'SELECT id, sauro_string FROM ' . DB_PREFIX . 'known_crns WHERE number_of_reactions = :number_of_reactions AND number_of_species = :number_of_species';
+		$statement = $controldb->prepare( $query );
+		$statement->bindParam( ':number_of_reactions', $number_of_reactions, PDO::PARAM_INT );
+		$statement->bindParam( ':number_of_species', $number_of_species, PDO::PARAM_INT );
+		$statement->execute();
+		$matches = $statement->fetchAll( PDO::FETCH_ASSOC );
+		$match_id = 0;
+
+		// Check isomorphism for each potential match
+		foreach( $matches as $match )
+		{
+			fwrite( $stderr, 'Possible match: ' . $match['sauro_string'] . PHP_EOL );
+
+			$temp_reaction_network = new ReactionNetwork();
+			if( !$match_id and $temp_reaction_network->parseSauro( $match['sauro_string'] ) )
+			{
+				if( $reaction_network->isIsomorphic( $temp_reaction_network ) )
+				{
+					$match_id = (int) $match['id'];
+					echo 'Isomorphism match found. This CRN is isomorphic to one stored in the CoNtRol database. It has the following properties:' . PHP_EOL . PHP_EOL;
+				}
+				else fwrite( $stderr, 'Possible match not isomorphic.' . PHP_EOL );
+			}
+		}
+
+		// Output results if a match was found
+		if( $match_id )
+		{
+			$query = 'SELECT result, submitter FROM ' . DB_PREFIX . 'known_crns WHERE id = :id';
+			$statement = $controldb->prepare( $query );
+			$statement->bindParam( ':id', $match_id, PDO::PARAM_INT );
+			$statement->execute();
+			$result = $statement->fetchAll( PDO::FETCH_ASSOC );
+			echo $result[0]['result'];
+			if( trim( $result[0]['submitter'] ) ) echo PHP_EOL, PHP_EOL, 'Submitted by ', sanitise( trim( $result[0]['submitter'] ) ), '.';
+		}
+		else echo 'No isomorphism matches found. This CRN is not isomorphic to any known CRNs in the CoNtRol database.' . PHP_EOL;
+	}
+	else fwrite( $stderr, "Usage: isomorphic <filename>\nCheck chemical reaction network described in <filename> for isorphism to known network\n" );
+}
+else fwrite( $stderr, "Usage: isomorphic <filename>\nCheck chemical reaction network described in <filename> for isorphism to known network\n" );
+fclose( $stderr );
