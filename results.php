@@ -1,3 +1,37 @@
+<script>
+/**
+ * Function to toggle the display of the results.
+ */
+
+function toggleDisplayResults(name) {
+if ('Show Results'.localeCompare(document.getElementById('toggle_' + name).innerHTML) === 0) {
+    document.getElementById('toggle_' + name).innerHTML = 'Hide Results';
+    document.getElementById('results_' + name).style.display = 'block';
+} else {
+    document.getElementById('toggle_' + name).innerHTML = 'Show Results';
+    document.getElementById('results_' + name).style.display = 'none';
+}
+return false;
+}
+
+
+function downloadResults(name) {
+  var element = document.createElement('a');
+  var content = "<meta charset=\"UTF-8\">\n"
+        + document.getElementById('results_' + name).innerHTML;
+  element.setAttribute('href', 'data:text/html;charset=utf-8,'
+       + encodeURIComponent(content));
+  element.setAttribute('download', name + '.html');
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+</script>
+
 <?php
 /**
  * CoNtRol results page
@@ -19,6 +53,7 @@ $title = 'CoNtRol - test results';
  * Standard HTML headers
  */
 require_once( 'includes/header.php' );
+
 
 if( !isset( $_SESSION['test_output'] ) ) die( 'No test results found.' );
 
@@ -61,7 +96,7 @@ foreach( $_SESSION['test_output'] as $name => $result )
 		echo '<p>', $standardTest->getDescription(), "</p>\n";
 	}
 	echo "							<h4>Results:</h4>\n";
-	if( trim( $result ) ) echo "<pre>$result</pre>\n						</div>\n";
+	if( trim( $result ) ) echo "<u><pre id='toggle_", $name, "' style='color:blue' onclick=toggleDisplayResults('", $name,"')>Show Results</pre></u>\n<pre id='results_", $name, "' style='display: none;'>$result</pre><u>\n<pre id='download_", $name, "' style='color:blue' onclick=downloadResults('", $name,"')>Download</pre></u>\n						</div>\n";
 	else echo "							<pre>No results available, either due to test timeout or misconfiguration of test.</pre>\n						</div>\n";
 }
 ?>
