@@ -60,9 +60,9 @@ $standardTests = array(
 		array( 'GLPK' ),
 		$doesNotSupportIniFile
 	),
+/*
 
-
-	new NetworkTest
+	NetworkTest new
 	(
 		'isomorphic',
 		'Isomorphism lookup',
@@ -82,7 +82,7 @@ $standardTests = array(
 		array( 'stoichiometry+V' ),
 		$doesNotSupportIniFile
 	),
-	// Reduced Determinant
+*/
 	new NetworkTest
 	(
 		'reduced_determinant',
