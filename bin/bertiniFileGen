@@ -1,0 +1,13 @@
+#!/bin/sh
+if [ $# -ne 1 ]
+then
+	echo "Usage: bertiniFileGen <filename>"
+	exit 2
+fi
+trap 'kill -KILL $(jobs -pr)' TERM
+if [ "$1" != "" ]; then
+    python bertiniFileGen.py $1
+else 
+    echo "NO FILE FOUND"
+fi
+
