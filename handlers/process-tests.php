@@ -67,6 +67,7 @@ if( isset( $_SESSION['reaction_network'] ) and $_SESSION['reaction_network']->ge
 		if( in_array( 'S+T+V', $currentTest->getInputFileFormats() ) ) $extension = '.stv';
 		if( in_array( 'GLPK', $currentTest->getInputFileFormats() ) ) $extension = '.glpk';
 		if( in_array( 'human', $currentTest->getInputFileFormats() ) ) $extension = '.hmn';
+		if( in_array( 'S+T', $currentTest->getInputFileFormats() ) ) $extension = '.s+t';
 
 		if( !$extension ) $temp = 'This test does not support any valid file formats. Test aborted.';
 		else

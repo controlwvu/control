@@ -415,6 +415,26 @@ class ReactionNetwork
 	}
 
 	/**
+	 * Export function for reaction network source and target stoichiometry and V matrix descriptor
+	 *
+	 * @param   bool    $LaTeX      If TRUE, exports LaTeX markup. If FALSE, exports plain text
+	 * @return  string  $equations  Text version of reaction network chemical matrices
+	 */
+	public function exportSourceAndTargetStoichiometry( $LaTeX = false )
+	{
+		$equations = 'S MATRIX'.PHP_EOL;
+		$equations .= $this->exportIrreversibleSourceStoichiometryMatrix();
+		$equations .= PHP_EOL . PHP_EOL . 'T MATRIX' . PHP_EOL;
+		$equations .= $this->exportIrreversibleTargetStoichiometryMatrix();
+		//$equations .= PHP_EOL . PHP_EOL . 'V MATRIX' . PHP_EOL;
+		//$equations .= $this->exportVMatrix();
+		/* TO DO: add REVERSIBLE section to output
+		$equations .= PHP_EOL.PHP_EOL.'REVERSIBLE'.PHP_EOL;
+		foreach($this->reactions)*/
+		return $equations;
+	}
+
+	/**
 	 * Export function for GLPK CRN data description
 	 *
 	 * @return  string  $glpk  GLPK version of CRN
@@ -683,6 +703,24 @@ class ReactionNetwork
 	}
 
 	/**
+	 * Export function for reaction network input stoichiometry
+	 *
+	 * @return  string  $equations  Text version of reaction network input stoichiometry matrix
+	 */
+	public function exportIrreversibleSourceStoichiometryMatrix()
+	{
+		$equations = '';
+		$stoichiometryMatrix = $this->generateIrreversibleSourceStoichiometryMatrix();
+		foreach($stoichiometryMatrix as $row)
+		{
+			$equations .= $row[0];
+			for($i = 1; $i < count($row); ++$i) $equations .= ' '.$row[$i];
+			$equations .= PHP_EOL;
+		}
+		return $equations;
+	}
+
+	/**
 	 * Export function for reaction network output stoichiometry
 	 *
 	 * @return  string  $equations  Text version of reaction network output stoichiometry matrix
@@ -699,6 +737,25 @@ class ReactionNetwork
 		}
 		return $equations;
 	}
+
+	/**
+	 * Export function for reaction network output stoichiometry
+	 *
+	 * @return  string  $equations  Text version of reaction network output stoichiometry matrix
+	 */
+	public function exportIrreversibleTargetStoichiometryMatrix()
+	{
+		$equations = '';
+		$stoichiometryMatrix = $this->generateIrreversibleTargetStoichiometryMatrix();
+		foreach($stoichiometryMatrix as $row)
+		{
+			$equations .= $row[0];
+			for($i = 1; $i < count($row); ++$i) $equations .= ' '.$row[$i];
+			$equations .= PHP_EOL;
+		}
+		return $equations;
+	}
+
 
 	/**
 	 * Export function for reaction rate Jacobian matrix

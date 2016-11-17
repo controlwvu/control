@@ -125,6 +125,20 @@ if(count($_POST) and isset($_POST['csrf_token']) and $_POST['csrf_token'] === $_
 	}
 	fclose($handle);
 
+	// Create net stoichiometry + V matrix descriptor file
+	$filename = $_SESSION['tempfile'].'.s+t';
+	if(!$handle = fopen($filename, 'w'))
+	{
+		echo "<p>Cannot open file ($filename)</p>";
+		exit;
+	}
+	if(fwrite($handle, $_SESSION['reaction_network']->exportSourceAndTargetStoichiometry()) === false)
+	{
+		echo "<p>Cannot write to file ($filename)</p>";
+		exit;
+	}
+	fclose($handle);
+
 	// Create source stoichiometry + target stoichiometry + V matrix descriptor file
 	$filename = $_SESSION['tempfile'].'.stv';
 	if(!$handle = fopen($filename, 'w'))
