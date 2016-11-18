@@ -14,6 +14,7 @@ compounds = javaObject("java.util.Hashtable");
 
 fid = fopen(txtName);
 side_flags = [];
+compound_list = [""];
 # Go through the file, line by line
 tline = fgets(fid);
 while ischar(tline)
@@ -31,18 +32,27 @@ while ischar(tline)
         if strcmp(substring, "") continue end
         #remove coefficients
         count = 1; #find the coefficient
-        while substring(count) <= '9' && substring(count) >= '0' && count <= length(substring)
-            count = count + 1;
+        loop = 1;
+        while count <= length(substring) && loop
+            if substring(count) <= '9' && substring(count) >= '0'
+                count = count + 1;
+            else 
+                loop = 0;
+            end
         end
         #Remove the coefficient you found.
         substring = substring(count:length(substring));
-        if strcmp(substring, "<--")
+        if strcmp(substring, "")  || length(substring) == 0
+            # Do nothing
+        elseif strcmp(substring, "<--")
             side_flags = [side_flags, false];
         elseif strcmp(substring, "-->")
             side_flags = [side_flags, true];
         elseif ~(strcmp(substring, "-->") || strcmp(substring, "<-->") || strcmp(substring, "<--") || strcmp(substring, "+")) && isempty(compounds.get(substring))
             num_of_compounds = num_of_compounds + 1;
             compounds.put(substring, num_of_compounds);
+            # Add the compound to the list
+            compound_list = [compound_list; substring];
         elseif (strcmp(substring, "<-->"))
             single_reaction = false;
             num_of_reactions = num_of_reactions + 1;
@@ -77,8 +87,13 @@ for rxn=1:num_of_reactions
         if strcmp(substring, "") continue end
         #remove coefficients
         count = 1; #find the coefficient
-        while substring(count) <= '9' && substring(count) >= '0' && count <= length(substring)
-            count = count + 1;
+        loop = 1;
+        while count <= length(substring) && loop
+            if substring(count) <= '9' && substring(count) >= '0'
+                count = count + 1;
+            else 
+                loop = 0;
+            end
         end
         
         #Get the coefficient
@@ -93,8 +108,9 @@ for rxn=1:num_of_reactions
         
         compound = compounds.get(substring);
         
-        
-        if strcmp(substring, "-->")
+        if strcmp(substring, "") || length(substring) == 0
+            # Do nothing
+        elseif strcmp(substring, "-->")
             side_flags(rxn) = !side_flags(rxn);
             coefficient = 0;
         elseif strcmp(substring, "<--")
@@ -114,16 +130,12 @@ for rxn=1:num_of_reactions
 end
 
 %# Get the key set of compounds, i.e. the compound names
-setOfCompounds = compounds.keySet();
-iterator = setOfCompounds.iterator();
-%#tmp = cell(compounds.size(), 1);
-%#count = 1;
-tmp= [""];
-while iterator.hasNext()
-  %#tmp(count) = iterator.next();
-  %#count = count + 1;
-  tmp = [tmp; iterator.next()];
-end
-compounds = tmp;
-
+#setOfCompounds = compounds.keySet();
+#iterator = setOfCompounds.iterator();
+#tmp= [""];
+#while iterator.hasNext()
+#  tmp = [tmp; iterator.next()];
+#end
+#compounds = tmp;
+compounds = compound_list;
 end
