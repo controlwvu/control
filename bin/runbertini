@@ -1,1 +1,1 @@
-python bertini/bertini_with_derivative.py
+./bertini/runbertini

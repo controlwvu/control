@@ -324,6 +324,13 @@ for($i = 0; $i < $number_of_jobs; ++$i)
 							}
 							break;
 
+						case 7: // Source + target stoichiometry (irreversible reactions) (s+t) 
+							$mimetype = get_mime( $dirname . '/' . $file );
+							if( strpos( $mimetype, 'text/' ) === 0 )
+							{ // Hack as sometimes files with comments get detected as a different mime type
+							}
+							else $file_found = false;
+							break;
 						case 0: // Human
 							// Fall through
 						default: // Assume 'human' if unsure
@@ -413,6 +420,22 @@ for($i = 0; $i < $number_of_jobs; ++$i)
 						}
 						fclose($handle);
 
+
+						// Create source stoichiometry and target stoichiometry descriptor file
+						$temp_filename = $filename.'.s+t';
+
+						if(!$handle = fopen($temp_filename, 'w'))
+						{
+							$mail .= "<p>ERROR: Cannot open file ($temp_filename)</p>\r\n";
+							$success = false;
+						}
+						if( fwrite( $handle, $reaction_network->exportSourceAndTargetStoichiometry() ) === false )
+						{
+							$mail .= "<p>ERROR: Cannot write to file ($temp_filename)</p>\r\n";
+							$success = false;
+						}
+						fclose($handle);
+
 						// Create source stoichiometry + target stoichiometry + V matrix descriptor file
 						$temp_filename = $filename . '.stv';
 
@@ -467,6 +490,7 @@ for($i = 0; $i < $number_of_jobs; ++$i)
 								if( in_array( 'S+T+V', $currentTest->getInputFileFormats() ) ) $extension = '.stv';
 								if( in_array( 'GLPK', $currentTest->getInputFileFormats() ) ) $extension = '.glpk';
 								if( in_array( 'human', $currentTest->getInputFileFormats() ) ) $extension = '.hmn';
+								if( in_array( 'S+T', $currentTest->getInputFileFormats() ) ) $extension = '.s+t';
 								if( !$extension ) $mail .= "<p>ERROR: This test does not support any valid file formats. Test aborted.</p>\r\n";
 								else
 								{

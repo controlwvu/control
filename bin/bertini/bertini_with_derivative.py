@@ -1,5 +1,9 @@
+import sys
+sys.path.insert(0, '../../bin')
+
 from sympy import Symbol, MutableDenseMatrix, Add, Mul, Integer, Matrix, Pow
 from oct2py import octave
+octave.temp_dir = '../../bin'
 import pickle
 
 #import scipy.io as sio
@@ -16,7 +20,7 @@ import pickle
 
 print "DERIVATIVE VECTOR"
 #cmpnds = octave.derivative_vector('/home/ross/test.txt')
-compounds, l, r = octave.human_parser('/home/casi/LocalControl/tt.txt')
+compounds, l, r = octave.human_parser('/home/ross/LocalControl/tt.txt')
 #print "First compound is: " + compounds[0]
 #print l
 #print r
