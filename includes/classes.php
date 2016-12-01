@@ -991,6 +991,7 @@ class ReactionNetwork
 				$targetStoichiometryMatrix[$i][] = $matrixEntry;
 			}
 		}
+         
 		return $targetStoichiometryMatrix;
 	}
 
