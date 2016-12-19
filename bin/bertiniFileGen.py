@@ -64,7 +64,11 @@ if numReac>1:
         file.write("," + " k%d" %i)
 file.write(';\n')
 
-file.write('function f1')
+#TODO: add the sampling of the constants, default sets values to 1
+for i in range(1,numReac+1):
+	file.write("k%d = 1;\n" %i)
+
+file.write('\nfunction f1')
 if numEqns>1:
     for i in range(2,numEqns+1):
         file.write("," + " f%d" %i)
@@ -93,5 +97,7 @@ for i in range (0,numSpec):
          eq="f%d=" % (i+1)+eq
     eqns.append(eq)
     file.write(eq+';\n')
+
+file.write('END;\n')
 
 file.close()
