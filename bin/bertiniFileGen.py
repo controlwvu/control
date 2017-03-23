@@ -150,11 +150,6 @@ for j in range(0,numReac):
 	        rate=rate+"^%d" % SMat[i][j]
     freeRates.append(rate)
 
-print(str(replacedVariables[2]))
-print(freeRates)
-
-
-
 eqns=[]
 
 for i in range(0,numSpec):
