@@ -1,6 +1,11 @@
+
 import sys
 from numpy.random import *
 from numpy import *
+
+def getRandomVector(size, upperBound = 10000000, lowerBound = 0):
+	tmp = (rand(size) * (upperBound - lowerBound)) + lowerBound
+	return (tmp);
 
 inputfilename = str(sys.argv[1])
 file = open(inputfilename, 'r')
@@ -66,9 +71,10 @@ if numReac>1:
         file.write("," + " k%d" %i)
 file.write(';\n')
 
-#TODO: add the sampling of the constants, default sets values to 1
+# Random sampling of constants
+k_values = getRandomVector(numReac+1);
 for i in range(1,numReac+1):
-	file.write("k%d = 1;\n" %i)
+	file.write("k%d = %f;\n" %(i, k_values[i]))
 
 file.write('\nfunction f1')
 if numEqns>1:
@@ -103,3 +109,5 @@ for i in range (0,numSpec):
 file.write('END;\n')
 
 file.close()
+
+

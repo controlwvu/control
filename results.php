@@ -2,7 +2,7 @@
 /**
  * Function to toggle the display of the results.
  */
-
+/*
 function toggleDisplayResults(name) {
 if ('Show Results'.localeCompare(document.getElementById('toggle_' + name).innerHTML) === 0) {
     document.getElementById('toggle_' + name).innerHTML = 'Hide Results';
@@ -30,6 +30,7 @@ function downloadResults(name) {
 
   document.body.removeChild(element);
 }
+*/
 </script>
 
 <?php
@@ -96,7 +97,10 @@ foreach( $_SESSION['test_output'] as $name => $result )
 		echo '<p>', $standardTest->getDescription(), "</p>\n";
 	}
 	echo "							<h4>Results:</h4>\n";
-	if( trim( $result ) ) echo "<u><pre id='toggle_", $name, "' style='color:blue' onclick=toggleDisplayResults('", $name,"')>Show Results</pre></u>\n<pre id='results_", $name, "' style='display: none;'>$result</pre><u>\n<pre id='download_", $name, "' style='color:blue' onclick=downloadResults('", $name,"')>Download</pre></u>\n						</div>\n";
+
+// <u><pre id='toggle_", $name, "' style='color:blue' onclick=toggleDisplayResults('", $name,"')>Show Results</pre></u>
+// <u>\n<pre id='download_", $name, "' style='color:blue' onclick=downloadResults('", $name,"')>Download</pre></u>
+	if( trim( $result ) ) echo "<img id='toggle_", $name, "' onclick=toggleDisplayResults('", $name,"') src='images/return.png'/>\n<img id='toggle_", $name, "' onclick=downloadResults('", $name,"') src='images/download.png'/>\n<pre id='results_", $name, "' style='display: none;'>$result</pre>\n						</div>\n";
 	else echo "							<pre>No results available, either due to test timeout or misconfiguration of test.</pre>\n						</div>\n";
 }
 ?>
