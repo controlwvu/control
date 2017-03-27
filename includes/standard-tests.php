@@ -60,6 +60,15 @@ $standardTests = array(
 		array( 'GLPK' ),
 		$doesNotSupportIniFile
 	),
+	new NetworkTest
+	(
+		'bertiniFileGen',
+		'Test',
+		'Testing a file',
+		'bertiniFileGen',
+		array( 'S+T+V' ),
+		$doesNotSupportIniFile
+	),
 /*
 
 	NetworkTest new
