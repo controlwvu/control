@@ -5,8 +5,6 @@ constant Tot1, Tot2;
 %Tot1=-x1 + x2
 %Tot2=2*x1 + x3
 
-function f1, f2, f3;
+function f1;
 
-f1=-k1*(Tot2/2 - x3/2)*(Tot1 + Tot2/2 - x3/2)+k2*x3^2;
-f2=-k1*(Tot2/2 - x3/2)*(Tot1 + Tot2/2 - x3/2)+k2*x3^2;
-f3=2*k1*(Tot2/2 - x3/2)*(Tot1 + Tot2/2 - x3/2)-2*k2*x3^2;
+f1=2*k1*(Tot2/2 - x3/2)*(Tot1 + Tot2/2 - x3/2)-2*k2*x3^2;

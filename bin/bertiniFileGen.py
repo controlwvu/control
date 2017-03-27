@@ -54,14 +54,13 @@ consLaws=symStoich.nullspace()
 #print(consLaws)
 
 noConsLaws=len(consLaws)
-
-#change this with conservation laws
-numEqns=numSpec
+numEqns=numSpec-noConsLaws
 
 file.write('INPUT\n')
 file.write('variable_group x1');
 variables=sympy.symbols('x1:%d'%(numSpec+1))
 variables=sympy.Matrix(variables)
+#if numSpec>1:
 if numSpec>1:
     for i in range(2,numSpec+1):
         file.write("," + " x%d" %i)
@@ -95,6 +94,8 @@ augMatrix=augMatrix.transpose()
 augMatrix=augMatrix.rref()
 pivots=augMatrix[1]
 augMatrix=augMatrix[0]
+freeVars=list(set(range(1,numSpec))-set(pivots))
+
 #print(augMatrix)
 #print(pivots)
 
@@ -113,7 +114,7 @@ replacedVariables=list(replacedVariables)
 
 file.write('function f1')
 if numEqns>1:
-    for i in range(2,numEqns+1):
+    for i in range(2,len(freeVars)+1):
         file.write("," + " f%d" %i)
 file.write(';\n')
 
@@ -132,37 +133,33 @@ for j in range(0,numReac):
 
 freeRates=[]
 
-print(SMat)
-
 for j in range(0,numReac):
     rate="k%d" % (j+1)
     for i in range(0,numSpec):
 	    if SMat[i][j]>0:
-                print(i)
                 par1=""
                 par2=""
                 if i in pivots:
                     par1="("
                     par2=")"
                 rate=rate+"*"+par1+str(replacedVariables[i])+par2
-                print(rate)
 	    if SMat[i][j]>1:
 	        rate=rate+"^%d" % SMat[i][j]
     freeRates.append(rate)
 
 eqns=[]
 
-for i in range(0,numSpec):
+for i in range(0,len(freeVars)):
     eq=''
     for j in range(0, numReac):
-	if stoich[i,j]>0:
+	if stoich[freeVars[i],j]>0:
 	    eq=eq+"+"
-	elif stoich[i,j]<0:
+	elif stoich[freeVars[i],j]<0:
 	    eq=eq+"-"
-	if abs(stoich[i,j])==1:
+	if abs(stoich[freeVars[i],j])==1:
 	    eq=eq + freeRates[j]
-	elif stoich[i,j]!=0:
-	    eq=eq + "%d*" % abs(stoich[i,j]) + freeRates[j]
+	elif stoich[freeVars[i],j]!=0:
+	    eq=eq + "%d*" % abs(stoich[freeVars[i],j]) + freeRates[j]
     if eq=='':
         eq="f%d=" % (i+1)+"0"
     elif eq[0]=='+':
