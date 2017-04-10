@@ -1,113 +1,237 @@
+import copy, sys, numpy, sympy
 
-import sys
-from numpy.random import *
-from numpy import *
+def getPadding():
+	return 4
 
 def getRandomVector(size, upperBound = 10000000, lowerBound = 0):
 	tmp = (rand(size) * (upperBound - lowerBound)) + lowerBound
 	return (tmp);
 
-inputfilename = str(sys.argv[1])
-file = open(inputfilename, 'r')
+def getRandomSample(numReac):
+	s = ''
+	# Random sampling of constants
+	k_values = getRandomVector(numReac+1);
+	for i in range(1,numReac+1):
+		s += ("k%d = %f;\n" %(i, k_values[i]))
 
-writeLeft=False
-writeRight=False
-SMat=[]
-TMat=[]
+	return s
 
-for line in file:
-    if line.rstrip('\n')=='S MATRIX':
-        writeLeft=True
-    elif line.rstrip('\n')=='T MATRIX':
-        writeLeft=False
-        writeRight=True
-    elif line.rstrip('\n')!='':
-        TT=map(int, line.rstrip('\n').split(' '))
-        if writeLeft:
-            SMat.append(TT)
-        elif writeRight:
-            TMat.append(TT)
 
-file.close
+def bertiniFileGenRandom(inputfile, outputfile, samples):
+	#inputfilename = str(sys.argv[1])
+	inputfilename = inputfile
+	#file = open(inputfilename, 'r')
 
-numSpec=len(SMat)
-numReac=len(SMat[0])
+	# Create two variables to store first half and last half of the file
+	first = ''
+	last = ''
 
-stoich=[]
-for j in range (0, numReac):
-    stoich.append([])
+	writeLeft=False
+	writeRight=False
+	SMat=[]
+	TMat=[]
 
-for i in range(0,numSpec):
-    for j in range(0, numReac):
-	stoich[i].append(TMat[i][j]-SMat[i][j])
+	for line in file:
+	    if line.rstrip('\n')=='S MATRIX':
+		writeLeft=True
+	    elif line.rstrip('\n')=='T MATRIX':
+		writeLeft=False
+		writeRight=True
+	    elif line.rstrip('\n')!='':
+		TT=map(int, line.rstrip('\n').split(' '))
+		if writeLeft:
+		    SMat.append(TT)
+		elif writeRight:
+		    TMat.append(TT)
 
-rates=[]
+	file.close
 
-for j in range(0,numReac):
-    rate="k%d" % (j+1)
-    for i in range(0,numSpec):
-	if SMat[i][j]>0:
-	    rate=rate+"*x%d" % (i+1)
-	    if SMat[i][j]>1:
-	        rate=rate+"^%d" % SMat[i][j]
-    rates.append(rate)
+	numSpec=len(SMat)
+	numReac=len(SMat[0])
+	
+	stoich=numpy.matrix(TMat)-numpy.matrix(SMat)
 
-outputfilename = str(sys.argv[2])
-file = open(outputfilename, 'w')
 
-#change this with conservation laws
-numEqns=numSpec
+	"""
+	symSMat=sympy.Matrix(SMat)
+	symTMat=sympy.Matrix(TMat)
+	symStoich=symTMat-symSMat
+	symStoich=sympy.Matrix(sympy.Transpose(symStoich))
 
-file.write('INPUT\n')
-file.write('variable_group x1');
-if numSpec>1:
-    for i in range(2,numSpec+1):
-        file.write("," + " x%d" %i)
-file.write(';\n')
+	symStoich=[]
+	for j in range (0, numReac):
+	    symStoich.append([])
 
-file.write('constant k1');
-if numReac>1:
-    for i in range(2,numReac+1):
-        file.write("," + " k%d" %i)
-file.write(';\n')
+	for i in range(0,numSpec):
+	    for j in range(0, numReac):
+		symStoich[i].append(TMat[i][j]-SMat[i][j])
+	"""
 
-# Random sampling of constants
-k_values = getRandomVector(numReac+1);
-for i in range(1,numReac+1):
-	file.write("k%d = %f;\n" %(i, k_values[i]))
+	rates=[]
 
-file.write('\nfunction f1')
-if numEqns>1:
-    for i in range(2,numEqns+1):
-        file.write("," + " f%d" %i)
-file.write(';\n')
+	for j in range(0,numReac):
+	    rate="k%d" % (j+1)
+	    for i in range(0,numSpec):
+		if SMat[i][j]>0:
+		    rate=rate+"*x%d" % (i+1)
+		    if SMat[i][j]>1:
+			rate=rate+"^%d" % SMat[i][j]
+	    rates.append(rate)
 
-file.write('\n')
+	outputfilename = str(outputfile)
+	file = open(outputfilename, 'w')
 
-eqns=[]
+	#Uncomment this for parameters from another file
+	#file.write('CONFIG\n ParameterHomotopy:2;\nEND;\n\n')
 
-for i in range (0,numSpec):
-    eq=''
-    for j in range(0, numReac):
-	if stoich[i][j]>0:
-	    eq=eq+"+"
-	elif stoich[i][j]<0:
-	    eq=eq+"-"
-	if abs(stoich[i][j])==1:
-	    eq=eq + rates[j]
-	elif stoich[i][j]!=0:
-	    eq=eq + "%d*" % abs(stoich[i][j]) + rates[j]
-    if eq=='':
-        eq="f%d=" % (i+1)+"0"
-    elif eq[0]=='+':
-        eq="f%d=" % (i+1) + eq[1:]
-    else:
-         eq="f%d=" % (i+1)+eq
-    eqns.append(eq)
-    file.write(eq+';\n')
+	#conservation laws
+	symStoich=sympy.Matrix(numpy.transpose(stoich))
+	consLaws=symStoich.nullspace()
+	#print(consLaws)
 
-file.write('END;\n')
+	noConsLaws=len(consLaws)
+	numEqns=numSpec-noConsLaws #numEqns=numSpec
 
-file.close()
+	#file.write('INPUT\n')
+	#file.write('variable_group x1');
+	first += 'INPUT\nvariable_group x1'
+	variables=sympy.symbols('x1:%d'%(numSpec+1))
+	variables=sympy.Matrix(variables)
+	if numSpec>1:
+	    for i in range(2,numSpec+1):
+		#file.write("," + " x%d" %i)
+		first += ", x%d" %i
+	#file.write(';\n')
+	first += ';\nconstant k1'
+
+	#file.write('constant k1');
+	if numReac>1:
+	    for i in range(2,numReac+1):
+		#file.write("," + " k%d" %i)
+		first += ", k%d" %i
+	#file.write(';\n')
+	first += ';\n'
+	
+
+	consTotals=sympy.symbols('Tot1:%d'%(noConsLaws+1))
+	consTotals=sympy.Matrix(consTotals)
+
+	if (noConsLaws>0):
+	    augMatrix=consLaws[0]
+	    #file.write('constant Tot1')
+	    first += 'constant Tot1'
+	    if (noConsLaws>1):
+		for i in range (1, noConsLaws):
+		    #file.write(","+ " Tot%d" %(i+1))
+		    first += ", Tot%d" %(i+1)
+		    augMatrix=augMatrix.row_join(consLaws[i])
+		#file.write(';\n')
+		first += ';\n'
+	    augMatrix=augMatrix.col_join(sympy.Transpose(consTotals))
+	    for j in range(0, noConsLaws):
+		first += '%'
+		first += "Tot%d" %(j+1)+"=%s\n" %(sympy.Matrix.transpose(variables)*consLaws[j])[0]
+		#file.write('%')
+		#file.write("Tot%d" %(j+1)+"=%s" %(sympy.Matrix.transpose(variables)*consLaws[j])[0])
+		#file.write('\n')
+	    #file.write('\n')
+	    first += '\n'
+
+	augMatrix=augMatrix.transpose()
+	augMatrix=augMatrix.rref()
+	pivots=augMatrix[1]
+	augMatrix=augMatrix[0]
+	freeVars=list(set(range(1,numSpec))-set(pivots))
+
+	#print(augMatrix)
+	#print(pivots)
+
+	replacedVariables=copy.deepcopy(variables)
+
+	for j in pivots:
+	    cc=list(augMatrix[j,:])
+	    i=cc.index(1)
+	    variab=copy.deepcopy(variables)
+	    variab[i]=0
+	    variab=variab.col_join(sympy.Matrix([-1]))
+	    variab=list(variab)
+	    replacedVariables[j]=-augMatrix[j,:].dot(variab)
+
+	replacedVariables=list(replacedVariables)
+"""
+	# Random sampling of constants
+	k_values = getRandomVector(numReac+1);
+	for i in range(1,numReac+1):
+		file.write("k%d = %f;\n" %(i, k_values[i]))
+"""
+	last += ('\nfunction f1')
+	if numEqns>1:
+	    for i in range(2,numEqns+1):
+		last += (", f%d" %i)
+	last += (';\n')
+
+	last += ('\n')
+
+	rates=[]
+
+	for j in range(0,numReac):
+	    rate="k%d" % (j+1)
+	    for i in range(0,numSpec):
+		    if SMat[i][j]>0:
+			rate=rate+"*"+str(variables[i])
+			if SMat[i][j]>1:
+			    rate=rate+"^%d" % SMat[i][j]
+	    rates.append(rate)
+
+	freeRates=[]
+
+	for j in range(0,numReac):
+	    rate="k%d" % (j+1)
+	    for i in range(0,numSpec):
+		    if SMat[i][j]>0:
+		        par1=""
+		        par2=""
+		        if i in pivots:
+		            par1="("
+		            par2=")"
+		        rate=rate+"*"+par1+str(replacedVariables[i])+par2
+		    if SMat[i][j]>1:
+			rate=rate+"^%d" % SMat[i][j]
+	    freeRates.append(rate)
+
+	eqns=[]
+
+	for i in range(0,len(freeVars)):
+	    eq=''
+	    for j in range(0, numReac):
+		if stoich[freeVars[i],j]>0:
+		    eq=eq+"+"
+		elif stoich[freeVars[i],j]<0:
+		    eq=eq+"-"
+		if abs(stoich[freeVars[i],j])==1:
+		    eq=eq + freeRates[j]
+		elif stoich[freeVars[i],j]!=0:
+		    eq=eq + "%d*" % abs(stoich[freeVars[i],j]) + freeRates[j]
+	    if eq=='':
+		eq="f%d=" % (i+1)+"0"
+	    elif eq[0]=='+':
+		eq="f%d=" % (i+1) + eq[1:]
+	    else:
+		 eq="f%d=" % (i+1)+eq
+	    eqns.append(eq)
+	    #file.write(eq+';\n')
+	    last += eq + ';\n'
+
+
+	last += 'END;\n'
+	#file.write('END;\n')
+	#file.close()
+
+	for i in range(0, sample):
+		file = open(inputfilename + str(i).zfill(getPadding()), 'r')
+		file.write(first)
+		file.write(getRandomSample(numReac))
+		file.write(last)
+		file.close()
 
 
