@@ -1,4 +1,5 @@
 import copy, sys, numpy, sympy
+from numpy.random import rand
 
 def getPadding():
 	return 4
@@ -17,10 +18,33 @@ def getRandomSample(numReac):
 	return s
 
 
+# pass into this method the file open('real_finite_solutions', 'r')
+def printPositiveSolutions(file1):
+	isPositive = 1
+	x = []
+	for line in file1:
+		# print line
+		if (((line == '') | (line == '\n')) & (isPositive == 1) &  (len(x) > 0)):
+			print x
+			x = []
+			isPositive = 1
+		elif ((line == '') | (line == '\n')):
+			x = []
+			isPositive = 1
+		elif (line != ''):
+			nums = line.split(' ', 4)
+			if (len(nums) == 2): # & (len([c for c in nums[1] if c==' ']) > 1)
+				x.append(float(nums[0]))
+				if (float(nums[0]) < 1e-10):
+					isPositive = 0
+			else:
+				x = []
+
+
 def bertiniFileGenRandom(inputfile, outputfile, samples):
 	#inputfilename = str(sys.argv[1])
 	inputfilename = inputfile
-	#file = open(inputfilename, 'r')
+	file = open(inputfilename, 'r')
 
 	# Create two variables to store first half and last half of the file
 	first = ''
@@ -44,7 +68,7 @@ def bertiniFileGenRandom(inputfile, outputfile, samples):
 		elif writeRight:
 		    TMat.append(TT)
 
-	file.close
+	file.close()
 
 	numSpec=len(SMat)
 	numReac=len(SMat[0])
@@ -78,8 +102,8 @@ def bertiniFileGenRandom(inputfile, outputfile, samples):
 			rate=rate+"^%d" % SMat[i][j]
 	    rates.append(rate)
 
-	outputfilename = str(outputfile)
-	file = open(outputfilename, 'w')
+	#outputfilename = str(outputfile)
+	#file = open(outputfilename, 'w')
 
 	#Uncomment this for parameters from another file
 	#file.write('CONFIG\n ParameterHomotopy:2;\nEND;\n\n')
@@ -127,6 +151,7 @@ def bertiniFileGenRandom(inputfile, outputfile, samples):
 		    augMatrix=augMatrix.row_join(consLaws[i])
 		#file.write(';\n')
 		first += ';\n'
+	    first += ';\n'
 	    augMatrix=augMatrix.col_join(sympy.Transpose(consTotals))
 	    for j in range(0, noConsLaws):
 		first += '%'
@@ -136,34 +161,34 @@ def bertiniFileGenRandom(inputfile, outputfile, samples):
 		#file.write('\n')
 	    #file.write('\n')
 	    first += '\n'
+	else:
+		augMatrix = numpy.zeros(0)
 
-	augMatrix=augMatrix.transpose()
-	augMatrix=augMatrix.rref()
-	pivots=augMatrix[1]
-	augMatrix=augMatrix[0]
-	freeVars=list(set(range(1,numSpec))-set(pivots))
+	if (noConsLaws>0):
+		augMatrix=augMatrix.transpose()
+		augMatrix=augMatrix.rref()
+		pivots=augMatrix[1]
+		augMatrix=augMatrix[0]
+		freeVars=list(set(range(1,numSpec))-set(pivots))
 
-	#print(augMatrix)
-	#print(pivots)
+		#print(augMatrix)
+		#print(pivots)
 
-	replacedVariables=copy.deepcopy(variables)
+		replacedVariables=copy.deepcopy(variables)
 
-	for j in pivots:
-	    cc=list(augMatrix[j,:])
-	    i=cc.index(1)
-	    variab=copy.deepcopy(variables)
-	    variab[i]=0
-	    variab=variab.col_join(sympy.Matrix([-1]))
-	    variab=list(variab)
-	    replacedVariables[j]=-augMatrix[j,:].dot(variab)
+		for j in pivots:
+		    cc=list(augMatrix[j,:])
+		    i=cc.index(1)
+		    variab=copy.deepcopy(variables)
+		    variab[i]=0
+		    variab=variab.col_join(sympy.Matrix([-1]))
+		    variab=list(variab)
+		    replacedVariables[j]=-augMatrix[j,:].dot(variab)
 
-	replacedVariables=list(replacedVariables)
-"""
-	# Random sampling of constants
-	k_values = getRandomVector(numReac+1);
-	for i in range(1,numReac+1):
-		file.write("k%d = %f;\n" %(i, k_values[i]))
-"""
+		replacedVariables=list(replacedVariables)
+	else:
+		pivots = numpy.zeros(0)
+
 	last += ('\nfunction f1')
 	if numEqns>1:
 	    for i in range(2,numEqns+1):
@@ -222,16 +247,20 @@ def bertiniFileGenRandom(inputfile, outputfile, samples):
 	    #file.write(eq+';\n')
 	    last += eq + ';\n'
 
-
+	print first
+	print last
 	last += 'END;\n'
 	#file.write('END;\n')
 	#file.close()
+	filenames = []
 
-	for i in range(0, sample):
-		file = open(inputfilename + str(i).zfill(getPadding()), 'r')
-		file.write(first)
-		file.write(getRandomSample(numReac))
-		file.write(last)
-		file.close()
+	for i in range(0, samples):
+		with open(outputfile + '-' + str(i).zfill(getPadding()), 'w+') as f:
+			filenames.append(outputfile + '-' + str(i).zfill(getPadding()))
+			f.write(first)
+			f.write(getRandomSample(numReac))
+			f.write(last)
+			f.close()
+	return filenames
 
 
