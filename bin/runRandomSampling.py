@@ -19,7 +19,7 @@ print 'Bertini files will be generated in filename=bertini'+outputhash
 tmpoutputfile = 'bertini' + outputhash 
 
 # Generate the file to run bertini with.
-filenames = bertiniRand.bertiniFileGenRandom(inputfilename, tmpoutputfile, samples)
+filenames = bertiniRand.bertiniFileGenRandom(inputfilename, tmpoutputfile, samples, bertiniRand.getRandomSample)
 
 # bufferfile = open('buffer_file', 'w')
 

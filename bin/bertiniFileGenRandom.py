@@ -41,7 +41,7 @@ def printPositiveSolutions(file1):
 				x = []
 
 
-def bertiniFileGenRandom(inputfile, outputfile, samples):
+def bertiniFileGenRandom(inputfile, outputfile, samples, samplingFunction):
 	#inputfilename = str(sys.argv[1])
 	inputfilename = inputfile
 	file = open(inputfilename, 'r')
@@ -258,7 +258,7 @@ def bertiniFileGenRandom(inputfile, outputfile, samples):
 		with open(outputfile + '-' + str(i).zfill(getPadding()), 'w+') as f:
 			filenames.append(outputfile + '-' + str(i).zfill(getPadding()))
 			f.write(first)
-			f.write(getRandomSample(numReac))
+			f.write(samplingFunction(numReac))#getRandomSample(numReac))
 			f.write(last)
 			f.close()
 	return filenames
