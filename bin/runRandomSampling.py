@@ -4,7 +4,7 @@
 
 
 import sys, subprocess, os
-import bertiniFileGenRandom as bertiniRand
+import bertiniFileGen as bertini
 from numpy.random import *
 from numpy import *
 from subprocess import call
@@ -19,7 +19,7 @@ print 'Bertini files will be generated in filename=bertini'+outputhash
 tmpoutputfile = 'bertini' + outputhash 
 
 # Generate the file to run bertini with.
-filenames = bertiniRand.bertiniFileGenRandom(inputfilename, tmpoutputfile, samples, bertiniRand.getRandomSample)
+filenames = bertini.bertiniFileGen(inputfilename, tmpoutputfile, samples, bertini.getRandomSample)
 
 # bufferfile = open('buffer_file', 'w')
 
@@ -27,3 +27,6 @@ filenames = bertiniRand.bertiniFileGenRandom(inputfilename, tmpoutputfile, sampl
 for filename in filenames:
 	#subprocess.call(['./bertini', filename], stdout=bufferfile)
 	print filename
+
+#filename2 = bertini.bertiniFileGenWithFile(inputfilename, 'constants', tmpoutputfile)
+#print filename2

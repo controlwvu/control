@@ -1,0 +1,5 @@
+python ../runRandomSampling.py test4.txt
+
+python ../runRandomSampling.py test5.txt
+
+
