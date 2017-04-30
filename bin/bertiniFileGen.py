@@ -1,3 +1,4 @@
+
 import copy, sys, numpy, sympy
 
 inputfilename = str(sys.argv[1])
@@ -72,9 +73,12 @@ if numReac>1:
         file.write("," + " k%d" %i)
 file.write(';\n')
 
-consTotals=sympy.symbols('Tot1:%d'%(noConsLaws+1))
-consTotals=sympy.Matrix(consTotals)
+if (noConsLaws>0):
+	consTotals=sympy.symbols('Tot1:%d'%(noConsLaws+1))
+	consTotals=sympy.Matrix(consTotals)
 
+freeVars=range(0,len(variables))
+print freeVars
 if (noConsLaws>0):
     augMatrix=consLaws[0]
     file.write('constant Tot1')
@@ -82,35 +86,31 @@ if (noConsLaws>0):
         for i in range (1, noConsLaws):
             file.write(","+ " Tot%d" %(i+1))
             augMatrix=augMatrix.row_join(consLaws[i])
-        file.write(';\n')
+    file.write(';\n')
     augMatrix=augMatrix.col_join(sympy.Transpose(consTotals))
     for j in range(0, noConsLaws):
-        file.write('%')
+        file.write('\n%')
         file.write("Tot%d" %(j+1)+"=%s" %(sympy.Matrix.transpose(variables)*consLaws[j])[0])
         file.write('\n')
     file.write('\n')
+    augMatrix=augMatrix.transpose()
+    augMatrix=augMatrix.rref()
+    pivots=augMatrix[1]
+    augMatrix=augMatrix[0]
+    freeVars=list(set(range(1,numSpec))-set(pivots))
 
-augMatrix=augMatrix.transpose()
-augMatrix=augMatrix.rref()
-pivots=augMatrix[1]
-augMatrix=augMatrix[0]
-freeVars=list(set(range(1,numSpec))-set(pivots))
+    replacedVariables=copy.deepcopy(variables)
 
-#print(augMatrix)
-#print(pivots)
+    for j in pivots:
+        cc=list(augMatrix[j,:])
+        i=cc.index(1)
+        variab=copy.deepcopy(variables)
+        variab[i]=0
+        variab=variab.col_join(sympy.Matrix([-1]))
+        variab=list(variab)
+        replacedVariables[j]=-augMatrix[j,:].dot(variab)
 
-replacedVariables=copy.deepcopy(variables)
-
-for j in pivots:
-    cc=list(augMatrix[j,:])
-    i=cc.index(1)
-    variab=copy.deepcopy(variables)
-    variab[i]=0
-    variab=variab.col_join(sympy.Matrix([-1]))
-    variab=list(variab)
-    replacedVariables[j]=-augMatrix[j,:].dot(variab)
-
-replacedVariables=list(replacedVariables)
+    replacedVariables=list(replacedVariables)
 
 file.write('function f1')
 if numEqns>1:
@@ -131,22 +131,26 @@ for j in range(0,numReac):
 	            rate=rate+"^%d" % SMat[i][j]
     rates.append(rate)
 
+print rates
 freeRates=[]
 
-for j in range(0,numReac):
-    rate="k%d" % (j+1)
-    for i in range(0,numSpec):
-	    if SMat[i][j]>0:
-                par1=""
-                par2=""
-                if i in pivots:
-                    par1="("
-                    par2=")"
-                rate=rate+"*"+par1+str(replacedVariables[i])+par2
-	    if SMat[i][j]>1:
-	        rate=rate+"^%d" % SMat[i][j]
-    freeRates.append(rate)
 
+if(noConsLaws > 0):
+    for j in range(0,numReac):
+        rate="k%d" % (j+1)
+        for i in range(0,numSpec):
+	        if SMat[i][j]>0:
+                    par1=""
+                    par2=""
+                    if i in pivots:
+                        par1="("
+                        par2=")"
+                    rate=rate+"*"+par1+str(replacedVariables[i])+par2
+	        if SMat[i][j]>1:
+	            rate=rate+"^%d" % SMat[i][j]
+        freeRates.append(rate)
+else:
+    freeRates = rates
 eqns=[]
 
 for i in range(0,len(freeVars)):
