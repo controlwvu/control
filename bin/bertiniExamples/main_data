@@ -1,0 +1,84 @@
+Number of variables: 1
+Variables:  x2
+Rank: 1
+-------------------------
+Solution 2 (path number 0)
+Estimated condition number: 6.888952326877696e+00
+Function residual: 1.917755075684236e-16
+Latest Newton residual: 6.412880398060625e-18
+T value at final sample point: 3.814697265625000e-07
+Maximum precision utilized: 52
+T value of first precision increase: 0.000000000000000e+00
+Accuracy estimate, internal coordinates (difference of last two endpoint estimates):  2.983405818033291e-13
+Accuracy estimate, user's coordinates (after dehomogenization, if applicable):  1.339001062855213e-11
+Cycle number: 1
+7.567862289004263e+00 -1.048315080576234e-15
+Paths with the same endpoint, to the prescribed tolerance:  
+Multiplicity: 1
+-------------------------
+Solution 0 (path number 1)
+Estimated condition number: 1.519200253742644e+02
+Function residual: 9.342526752220692e-14
+Latest Newton residual: 2.060920313642518e-17
+T value at final sample point: 1.562500000000000e-03
+Maximum precision utilized: 52
+T value of first precision increase: 0.000000000000000e+00
+Accuracy estimate, internal coordinates (difference of last two endpoint estimates):  4.612118133941434e-12
+Accuracy estimate, user's coordinates (after dehomogenization, if applicable):  3.771701367083875e-12
+Cycle number: 1
+1.321377109957394e-01 -5.850456566685452e-16
+Paths with the same endpoint, to the prescribed tolerance:  
+Multiplicity: 1
+-------------------------
+Solution 1 (path number 2)
+Estimated condition number: 6.900430968040702e+00
+Function residual: 4.535575134284005e-17
+Latest Newton residual: 3.463199457930173e-17
+T value at final sample point: 3.814697265625000e-07
+Maximum precision utilized: 52
+T value of first precision increase: 0.000000000000000e+00
+Accuracy estimate, internal coordinates (difference of last two endpoint estimates):  2.983212909314876e-13
+Accuracy estimate, user's coordinates (after dehomogenization, if applicable):  1.386323934924540e-11
+Cycle number: 1
+7.699999999999999e+00 1.061108666211563e-15
+Paths with the same endpoint, to the prescribed tolerance:  
+Multiplicity: 1
+-------------------------
+At tol=1.000000000000e-10, there appear to be 3 solutions.
+
+
+*************** input file needed to reproduce this run ***************
+
+CONFIG
+
+CoeffBound: 1.487861000000e+02;
+DegreeBound: 3.000000000000e+00;
+RandomSeed: 1493595200;
+
+END;
+
+INPUT
+
+variable_group x2;
+constant y1,y2;
+constant k1,k2;
+constant Tot1;
+k1=1;
+k2=1;
+y1=1.7;
+y2=6;
+Tot1=y1+y2;
+function f1;
+f1=-k1*(Tot1-x2)^2*x2+k2*(Tot1-x2);
+
+END;
+
+
+*************** version information ***************
+Bertini(TM) v1.5.1
+GMP v6.1.1, MPFR v3.1.4
+
+Authors:
+D.J. Bates, J.D. Hauenstein,
+A.J. Sommese, C.W. Wampler
+

@@ -1,0 +1,102 @@
+
+ Bertini(TM) v1.5.1
+  (August 29, 2016)
+
+ D.J. Bates, J.D. Hauenstein,
+ A.J. Sommese, C.W. Wampler
+
+(using GMP v6.1.1, MPFR v3.1.4)
+
+
+
+NOTE: You have requested to use adaptive path tracking.  Please make sure that you have
+setup the following tolerances appropriately:
+CoeffBound: 3.391542000000e+01, DegreeBound: 3.000000000000e+00
+AMPSafetyDigits1: 1, AMPSafetyDigits2: 1, AMPMaxPrec: 1024
+
+Tracking path 0 of 3
+
+Finite Solution Summary
+
+NOTE: nonsingular vs singular is based on condition number and identical endpoints
+
+		| Number of real solns	|  Number of non-real solns	|  Total
+------------------------------------------------------------------------------------------
+Non-singular	|	3		|		0		|   3
+Singular	|	0		|		0		|   0
+------------------------------------------------------------------------------------------
+Total		|	3		|		0		|   3
+
+
+Finite Multiplicity Summary
+
+  Multiplicity	|  Number of real solns	|  Number of non-real solns
+------------------------------------------------------------------------------------------
+	1	|	3		|	0
+
+
+------------------------------------------------------------------------------------------
+The following files may be of interest to you:
+
+main_data:             A human-readable version of the solutions - main output file.
+raw_solutions:         A list of the solutions with the corresponding path numbers.
+raw_data:              Similar to the previous, but with the points in Bertini's homogeneous
+                         coordinates along with more information about the solutions.
+real_finite_solutions: A list of all real finite solutions.
+finite_solutions:      A list of all finite solutions.
+nonsingular_solutions: A list of all nonsingular solutions.
+singular_solutions:    A list of all singular solutions.
+------------------------------------------------------------------------------------------
+
+Paths Tracked: 3
+
+ Bertini(TM) v1.5.1
+  (August 29, 2016)
+
+ D.J. Bates, J.D. Hauenstein,
+ A.J. Sommese, C.W. Wampler
+
+(using GMP v6.1.1, MPFR v3.1.4)
+
+
+
+NOTE: You have requested to use adaptive path tracking.  Please make sure that you have
+setup the following tolerances appropriately:
+CoeffBound: 1.487861000000e+02, DegreeBound: 3.000000000000e+00
+AMPSafetyDigits1: 1, AMPSafetyDigits2: 1, AMPMaxPrec: 1024
+
+Tracking path 0 of 3
+
+Finite Solution Summary
+
+NOTE: nonsingular vs singular is based on condition number and identical endpoints
+
+		| Number of real solns	|  Number of non-real solns	|  Total
+------------------------------------------------------------------------------------------
+Non-singular	|	3		|		0		|   3
+Singular	|	0		|		0		|   0
+------------------------------------------------------------------------------------------
+Total		|	3		|		0		|   3
+
+
+Finite Multiplicity Summary
+
+  Multiplicity	|  Number of real solns	|  Number of non-real solns
+------------------------------------------------------------------------------------------
+	1	|	3		|	0
+
+
+------------------------------------------------------------------------------------------
+The following files may be of interest to you:
+
+main_data:             A human-readable version of the solutions - main output file.
+raw_solutions:         A list of the solutions with the corresponding path numbers.
+raw_data:              Similar to the previous, but with the points in Bertini's homogeneous
+                         coordinates along with more information about the solutions.
+real_finite_solutions: A list of all real finite solutions.
+finite_solutions:      A list of all finite solutions.
+nonsingular_solutions: A list of all nonsingular solutions.
+singular_solutions:    A list of all singular solutions.
+------------------------------------------------------------------------------------------
+
+Paths Tracked: 3

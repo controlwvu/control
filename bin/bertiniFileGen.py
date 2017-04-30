@@ -86,14 +86,19 @@ def getFullSolutions(filename, sols):
 	        exec(lhs[i]+'='+rhs[i])
 	    for i in range(1, (len(variables)+len(removed)+1)):
 	        exec('cur.append(x'+str(i)+')')
-	    solsets.append(cur)
+	    isPos=1
+	    for x in cur:
+	        if (x <= 0.0):
+	            isPos=0
+	    if isPos:
+	        solsets.append(cur)
 	    cur=[]
 	    
 	return solsets	
 
 
 
-def bertiniFileGenWithFile(inputfile, constantsfile, samples, outputfile):
+def bertiniFileGenWithFile(inputfile, constantsfile, outputfile):
 	def sampleFromFile(s,t,u):
 		x = []
 		file = open(constantsfile)
@@ -108,7 +113,7 @@ def bertiniFileGenWithFile(inputfile, constantsfile, samples, outputfile):
 		if (k != '') & (k.replace('\n', '') != ''):
 			x.append(k)
 		return x
-	return bertiniFileGen(inputfile, outputfile, samples, sampleFromFile)
+	return bertiniFileGen(inputfile, outputfile, 0, sampleFromFile)
 
 def deleteFiles(files):
 	for file in files:
@@ -343,7 +348,7 @@ def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 	filenames = []
 	sampling = samplingFunction(numReac, numSpec, samples)
 
-	for i in range(0, samples):
+	for i in range(0, len(sampling)):
 		with open(outputfile + '-' + str(i).zfill(getPadding()), 'w+') as f:
 			filenames.append(outputfile + '-' + str(i).zfill(getPadding()))
 			f.write(first)

@@ -9,14 +9,14 @@ from numpy.random import *
 from numpy import *
 from subprocess import call
 
-samples = int(float(sys.argv[3]))
+outputfilename = str(sys.argv[3])
 inputfilename = str(sys.argv[1])
 constants = str(sys.argv[2])
 
 # Generate a unique filename
 outputhash = str(randint(1000000,9999999)) + str(randint(1000000,9999999)) + str(randint(1000000,9999999)) + str(randint(1000000,9999999)) + str(randint(1000000,9999999))
 
-print 'Bertini files will be generated in filename=bertini'+outputhash
+#print 'Bertini files will be generated in filename=bertini'+outputhash
 
 tmpoutputfile = 'bertini' + outputhash 
 
@@ -28,8 +28,9 @@ bufferfile = open('buffer_file', 'w')
 bufferfile.close()
 bufferfile = open('buffer_file', 'a')
 
-filenames = bertini.bertiniFileGenWithFile(inputfilename, constants, samples, tmpoutputfile)
-print 'Generated Files.'
+out = open(outputfilename, 'w')
+
+filenames = bertini.bertiniFileGenWithFile(inputfilename, constants, tmpoutputfile)
 #print filenames
 
 x = []
@@ -47,9 +48,10 @@ bufferfile.close()
 for i in range(0, len(filenames)):
 	# filename, x[i] - solution sets, 
 	solutions=bertini.getFullSolutions(filenames[i], x[i])
-	print solutions
-	
+	out.write(str(solutions))
+	out.write('\n')
 
+out.close()
 bertini.deleteFiles(filenames)
 
 
