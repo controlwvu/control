@@ -156,10 +156,10 @@ def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 	#file.write(';\n')
 	first += ';\n'
 	
-
-	consTotals=sympy.symbols('Tot1:%d'%(noConsLaws+1))
-	consTotals=sympy.Matrix(consTotals)
-
+	if (noConsLaws>0):
+		consTotals=sympy.symbols('Tot1:%d'%(noConsLaws+1))
+		consTotals=sympy.Matrix(consTotals)
+	freeVars=range(0,len(variables))
 	if (noConsLaws>0):
 	    augMatrix=consLaws[0]
 	    #file.write('constant Tot1')
@@ -181,33 +181,27 @@ def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 		#file.write('\n')
 	    #file.write('\n')
 	    first += '\n'
-	else:
-		augMatrix = numpy.zeros(0)
+	
 
-	if (noConsLaws>0):
-		augMatrix=augMatrix.transpose()
-		augMatrix=augMatrix.rref()
-		pivots=augMatrix[1]
-		augMatrix=augMatrix[0]
-		freeVars=list(set(range(1,numSpec))-set(pivots))
+	
+	    augMatrix=augMatrix.transpose()
+	    augMatrix=augMatrix.rref()
+	    pivots=augMatrix[1]
+	    augMatrix=augMatrix[0]
+	    freeVars=list(set(range(1,numSpec))-set(pivots))
 
-		#print(augMatrix)
-		#print(pivots)
+	    replacedVariables=copy.deepcopy(variables)
 
-		replacedVariables=copy.deepcopy(variables)
+	    for j in pivots:
+	        cc=list(augMatrix[j,:])
+	        i=cc.index(1)
+	        variab=copy.deepcopy(variables)
+	        variab[i]=0
+	        variab=variab.col_join(sympy.Matrix([-1]))
+	        variab=list(variab)
+	        replacedVariables[j]=-augMatrix[j,:].dot(variab)
 
-		for j in pivots:
-		    cc=list(augMatrix[j,:])
-		    i=cc.index(1)
-		    variab=copy.deepcopy(variables)
-		    variab[i]=0
-		    variab=variab.col_join(sympy.Matrix([-1]))
-		    variab=list(variab)
-		    replacedVariables[j]=-augMatrix[j,:].dot(variab)
-
-		replacedVariables=list(replacedVariables)
-	else:
-		pivots = numpy.zeros(0)
+	    replacedVariables=list(replacedVariables)
 
 	last += ('\nfunction f1')
 	if numEqns>1:
@@ -229,20 +223,22 @@ def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 	    rates.append(rate)
 
 	freeRates=[]
-
-	for j in range(0,numReac):
-	    rate="k%d" % (j+1)
-	    for i in range(0,numSpec):
-		    if SMat[i][j]>0:
-		        par1=""
-		        par2=""
-		        if i in pivots:
-		            par1="("
-		            par2=")"
-		        rate=rate+"*"+par1+str(replacedVariables[i])+par2
-		    if SMat[i][j]>1:
-			rate=rate+"^%d" % SMat[i][j]
-	    freeRates.append(rate)
+	if (noConsLaws>0):
+		for j in range(0,numReac):
+		    rate="k%d" % (j+1)
+		    for i in range(0,numSpec):
+			    if SMat[i][j]>0:
+				par1=""
+				par2=""
+				if i in pivots:
+				    par1="("
+				    par2=")"
+				rate=rate+"*"+par1+str(replacedVariables[i])+par2
+			    if SMat[i][j]>1:
+				rate=rate+"^%d" % SMat[i][j]
+		    freeRates.append(rate)
+	else:
+		freeRates = rates
 
 	eqns=[]
 
