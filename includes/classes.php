@@ -94,7 +94,19 @@ class Reaction
 			{
 				if( $reactantString{$i} !== ' ' ) $temp .= $reactantString{$i};
 			}
-			$reactants = explode('+', $temp);
+			$reactants = explode('+', $temp); // does not eliminate stricly Zeroes
+
+
+			// Remove any reactants that have just a '0'
+			$numberOfReactants = count( $reactants );
+			for ( $i = 0; $i < $numberOfReactants; $i++)
+			{
+				if (strcmp($reactants[$i], "0") === 0 || strcmp($reactants[$i], "") === 0 )
+				{
+					unset($reactants[$i]);
+				}
+			}
+			$reactants = array_values($reactants);
 		}
 		$numberOfReactants = count( $reactants );
 		$reactantStoichiometries = array();

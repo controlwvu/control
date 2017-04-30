@@ -671,3 +671,44 @@ $( document ).ready( function()
 		$( '.reaction_left_hand_side' ).first().select();
 	}
 } );
+
+
+function toggleDisplayResults(name) {
+
+if (document.getElementById('results_' + name).style.display === 'none') {
+//    document.getElementById('toggle_' + name).innerHTML = 'Hide Results';
+    document.getElementById('results_' + name).style.display = 'block';
+} else {
+//    document.getElementById('toggle_' + name).innerHTML = 'Show Results';
+    document.getElementById('results_' + name).style.display = 'none';
+}
+
+/*
+if ('Show Results'.localeCompare(document.getElementById('toggle_' + name).innerHTML) === 0) {
+    document.getElementById('toggle_' + name).innerHTML = 'Hide Results';
+    document.getElementById('results_' + name).style.display = 'block';
+} else {
+    document.getElementById('toggle_' + name).innerHTML = 'Show Results';
+    document.getElementById('results_' + name).style.display = 'none';
+}
+*/
+
+return false;
+}
+
+
+function downloadResults(name) {
+  var element = document.createElement('a');
+  var content = "<meta charset=\"UTF-8\">\n"
+        + document.getElementById('results_' + name).innerHTML;
+  element.setAttribute('href', 'data:text/html;charset=utf-8,'
+       + encodeURIComponent(content));
+  element.setAttribute('download', name + '.html');
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}

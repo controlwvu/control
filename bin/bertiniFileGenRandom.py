@@ -1,4 +1,3 @@
-
 import copy, sys, numpy, sympy
 from numpy.random import rand
 
@@ -9,16 +8,13 @@ def getRandomVector(size, upperBound = 10000000, lowerBound = 0):
 	tmp = (rand(size) * (upperBound - lowerBound)) + lowerBound
 	return (tmp);
 
-def getRandomSample(numReac, numSpec):
+def getRandomSample(numReac):
 	s = ''
 	# Random sampling of constants
 	k_values = getRandomVector(numReac+1);
 	for i in range(1,numReac+1):
 		s += ("k%d = %f;\n" %(i, k_values[i]))
-	#Random sampling of initial conditions
-	y_values = getRandomVector(numSpec+1);
-	for i in range(1,numSpec+1):
-		s += ("y%d = %f;\n" %(i, y_values[i]))
+
 	return s
 
 
@@ -45,17 +41,7 @@ def printPositiveSolutions(file1):
 				x = []
 
 
-
-def bertiniFileGenWithFile(inputfile, constantsfile, outputfile):
-	def sampleFromFile(s):
-		file = open(constantsfile)
-		k = ''
-		for line in file:
-			k += line
-		return k
-	return bertiniFileGen(inputfile, outputfile, 1, sampleFromFile)
-
-def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
+def bertiniFileGenRandom(inputfile, outputfile, samples, samplingFunction):
 	#inputfilename = str(sys.argv[1])
 	inputfilename = inputfile
 	file = open(inputfilename, 'r')
@@ -134,17 +120,11 @@ def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 	#file.write('variable_group x1');
 	first += 'INPUT\nvariable_group x1'
 	variables=sympy.symbols('x1:%d'%(numSpec+1))
-	initConds=sympy.Matrix(sympy.symbols('y1:%d'%(numSpec+1)))
 	variables=sympy.Matrix(variables)
 	if numSpec>1:
 	    for i in range(2,numSpec+1):
 		#file.write("," + " x%d" %i)
 		first += ", x%d" %i
-	first += ';\nconstant y1'	
-	if numSpec>1:
-	    for i in range(2,numSpec+1):
-		#file.write("," + " x%d" %i)
-		first += ", y%d" %i
 	#file.write(';\n')
 	first += ';\nconstant k1'
 
@@ -174,8 +154,8 @@ def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 	    first += ';\n'
 	    augMatrix=augMatrix.col_join(sympy.Transpose(consTotals))
 	    for j in range(0, noConsLaws):
-		#first += '%'
-		last += "Tot%d" %(j+1)+"=%s;\n" %(sympy.Matrix.transpose(initConds)*consLaws[j])[0]  # first += ...
+		first += '%'
+		first += "Tot%d" %(j+1)+"=%s\n" %(sympy.Matrix.transpose(variables)*consLaws[j])[0]
 		#file.write('%')
 		#file.write("Tot%d" %(j+1)+"=%s" %(sympy.Matrix.transpose(variables)*consLaws[j])[0])
 		#file.write('\n')
@@ -267,6 +247,8 @@ def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 	    #file.write(eq+';\n')
 	    last += eq + ';\n'
 
+	print first
+	print last
 	last += 'END;\n'
 	#file.write('END;\n')
 	#file.close()
@@ -276,10 +258,9 @@ def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 		with open(outputfile + '-' + str(i).zfill(getPadding()), 'w+') as f:
 			filenames.append(outputfile + '-' + str(i).zfill(getPadding()))
 			f.write(first)
-			f.write(samplingFunction(numReac, numSpec))#getRandomSample(numReac))
+			f.write(samplingFunction(numReac))#getRandomSample(numReac))
 			f.write(last)
 			f.close()
 	return filenames
-
 
 
