@@ -1,5 +1,5 @@
 
-import copy, sys, numpy, sympy
+import copy, sys, numpy, sympy, os
 from numpy.random import rand
 
 def getPadding():
@@ -9,27 +9,32 @@ def getRandomVector(size, upperBound = 10000000, lowerBound = 0):
 	tmp = (rand(size) * (upperBound - lowerBound)) + lowerBound
 	return (tmp);
 
-def getRandomSample(numReac, numSpec):
-	s = ''
-	# Random sampling of constants
-	k_values = getRandomVector(numReac+1);
-	for i in range(1,numReac+1):
-		s += ("k%d = %f;\n" %(i, k_values[i]))
-	#Random sampling of initial conditions
-	y_values = getRandomVector(numSpec+1);
-	for i in range(1,numSpec+1):
-		s += ("y%d = %f;\n" %(i, y_values[i]))
-	return s
+def getRandomSample(numReac, numSpec, samples):
+	x = []
+	for i in range(0, samples):
+		s = ''
+		# Random sampling of constants
+		k_values = getRandomVector(numReac+1);
+		for i in range(1,numReac+1):
+			s += ("k%d = %f;\n" %(i, k_values[i]))
+		#Random sampling of initial conditions
+		y_values = getRandomVector(numSpec+1);
+		for i in range(1,numSpec+1):
+			s += ("y%d = %f;\n" %(i, y_values[i]))
+		x.append(s)
+	return x
 
 
 # pass into this method the file open('real_finite_solutions', 'r')
 def printPositiveSolutions(file1):
 	isPositive = 1
 	x = []
+	y = []
 	for line in file1:
 		# print line
 		if (((line == '') | (line == '\n')) & (isPositive == 1) &  (len(x) > 0)):
-			print x
+			#print x
+			y.append(x)
 			x = []
 			isPositive = 1
 		elif ((line == '') | (line == '\n')):
@@ -39,21 +44,75 @@ def printPositiveSolutions(file1):
 			nums = line.split(' ', 4)
 			if (len(nums) == 2): # & (len([c for c in nums[1] if c==' ']) > 1)
 				x.append(float(nums[0]))
-				if (float(nums[0]) < 1e-10):
+				if (float(nums[0]) < 1e-20):
 					isPositive = 0
 			else:
 				x = []
+	return y
+
+def getFullSolutions(filename, sols):
+	file=open(filename, 'r')
+	variables=[]
+	removed =[]
+	#init={}
+	initvars=[]
+	consLaws=[]
+	lhs=[]
+	rhs=[]
+	for line in file:
+	    if "variable_group" in line:
+	        variables=line.replace('variable_group','').replace(',','').replace(';', '').split()
+	    elif "removed" in line:
+	        removed=line.replace('% removed','').replace(',','').replace(';', '').split()
+	    elif '%' in line: # Change this if more automated comments are added in the future.
+	        # The equations to be evaluated
+	        line=line.replace('%','').replace(';\n','').split('=')
+	        lhs.append(line[0].replace(' ', ''))
+	        rhs.append(line[1])
+	    elif ('=' in line) & ('y' in line) & ('Tot' in line):
+	        parts=line.replace(';','').replace(' ','').replace('\n','').split('=')
+	        consLaws.append(parts[0])
+	        exec(line)
+	    elif ('=' in line) & ('y' in line):
+	        parts=line.replace(';','').replace(' ','').replace('\n','').split('=')
+	        initvars.append(parts[0])
+	        exec(line)
+	cur=[]
+	solsets = []
+	for solution in sols:
+	    for i in range(0, len(variables)):
+	        exec(str(variables[i]) + '=' + str(solution[i]))
+	    for i in range(0, len(lhs)):
+	        exec(lhs[i]+'='+rhs[i])
+	    for i in range(1, (len(variables)+len(removed)+1)):
+	        exec('cur.append(x'+str(i)+')')
+	    solsets.append(cur)
+	    cur=[]
+	    
+	return solsets	
 
 
 
-def bertiniFileGenWithFile(inputfile, constantsfile, outputfile):
-	def sampleFromFile(s):
+def bertiniFileGenWithFile(inputfile, constantsfile, samples, outputfile):
+	def sampleFromFile(s,t,u):
+		x = []
 		file = open(constantsfile)
 		k = ''
 		for line in file:
-			k += line
-		return k
-	return bertiniFileGen(inputfile, outputfile, 1, sampleFromFile)
+			if (line =='PARAMS') | (line == 'PARAMS\n'):
+				if (k != '') & (k.replace('\n', '') != ''):
+					x.append(k)
+				k = ''
+			else:
+				k += line
+		if (k != '') & (k.replace('\n', '') != ''):
+			x.append(k)
+		return x
+	return bertiniFileGen(inputfile, outputfile, samples, sampleFromFile)
+
+def deleteFiles(files):
+	for file in files:
+		os.remove(file)
 
 def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 	#inputfilename = str(sys.argv[1])
@@ -202,7 +261,22 @@ def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 	        replacedVariables[j]=-augMatrix[j,:].dot(variab)
 
 	    replacedVariables=list(replacedVariables)
+	    removedVariables=[variables[i] for i in pivots]
+	    
+	    first+='% removed'
+	    for remove in removedVariables:
+	        first=first.replace(' '+str(remove)+',', '')
+	        first=first.replace(' '+str(remove)+';', '')
+	        first+=' '+str(remove)+','
+	    first=first[:-1]
+	    first+=';\n'
+	    
+	    for i in pivots:
+	        first+='% '+str(variables[i])+'='+str(replacedVariables[i])+';\n'
+	    first+='\n\n'
 
+
+	
 	last += ('\nfunction f1')
 	if numEqns>1:
 	    for i in range(2,numEqns+1):
@@ -267,12 +341,13 @@ def bertiniFileGen(inputfile, outputfile, samples, samplingFunction):
 	#file.write('END;\n')
 	#file.close()
 	filenames = []
+	sampling = samplingFunction(numReac, numSpec, samples)
 
 	for i in range(0, samples):
 		with open(outputfile + '-' + str(i).zfill(getPadding()), 'w+') as f:
 			filenames.append(outputfile + '-' + str(i).zfill(getPadding()))
 			f.write(first)
-			f.write(samplingFunction(numReac, numSpec))#getRandomSample(numReac))
+			f.write(sampling[i])#getRandomSample(numReac))
 			f.write(last)
 			f.close()
 	return filenames
