@@ -11,10 +11,14 @@
 
 NOTE: You have requested to use adaptive path tracking.  Please make sure that you have
 setup the following tolerances appropriately:
-CoeffBound: 3.391542000000e+01, DegreeBound: 3.000000000000e+00
+CoeffBound: 2.188621000000e+05, DegreeBound: 2.000000000000e+00
 AMPSafetyDigits1: 1, AMPSafetyDigits2: 1, AMPMaxPrec: 1024
 
-Tracking path 0 of 3
+Tracking path 0 of 32
+Tracking path 20 of 32
+!!!WARNING!!!  Paths 6 and 22 may have crossed!!!
+!!!WARNING!!!  Paths 0 and 20 may have crossed!!!
+!!!WARNING!!!  Paths 26 and 10 may have crossed!!!
 
 Finite Solution Summary
 
@@ -22,8 +26,8 @@ NOTE: nonsingular vs singular is based on condition number and identical endpoin
 
 		| Number of real solns	|  Number of non-real solns	|  Total
 ------------------------------------------------------------------------------------------
-Non-singular	|	3		|		0		|   3
-Singular	|	0		|		0		|   0
+Non-singular	|	0		|		0		|   0
+Singular	|	3		|		0		|   3
 ------------------------------------------------------------------------------------------
 Total		|	3		|		0		|   3
 
@@ -33,6 +37,25 @@ Finite Multiplicity Summary
   Multiplicity	|  Number of real solns	|  Number of non-real solns
 ------------------------------------------------------------------------------------------
 	1	|	3		|	0
+
+
+Infinite Solution Summary
+
+NOTE: nonsingular vs singular is based on condition number and identical endpoints
+
+		| Number of real solns	|  Number of non-real solns	|  Total
+------------------------------------------------------------------------------------------
+Non-singular	|	0		|		0		|   0
+Singular	|	0		|		7		|   7
+------------------------------------------------------------------------------------------
+Total		|	0		|		7		|   7
+
+
+Infinite Multiplicity Summary
+
+  Multiplicity	|  Number of real solns	|  Number of non-real solns
+------------------------------------------------------------------------------------------
+	1	|	0		|	7
 
 
 ------------------------------------------------------------------------------------------
@@ -48,7 +71,15 @@ nonsingular_solutions: A list of all nonsingular solutions.
 singular_solutions:    A list of all singular solutions.
 ------------------------------------------------------------------------------------------
 
-Paths Tracked: 3
+It appears that 3 path crossing(s) occurred prior to t=tEndgame
+
+   Try adjusting TRACKTOLBEFOREEG in the input file
+
+
+Paths Tracked: 32
+ Truncated infinite paths: 22 - try adjusting SecurityMaxNorm or set SecurityLevel to 1 in the input file
+   Please see 'failed_paths' for more information about these paths.
+
 
  Bertini(TM) v1.5.1
   (August 29, 2016)
@@ -62,10 +93,15 @@ Paths Tracked: 3
 
 NOTE: You have requested to use adaptive path tracking.  Please make sure that you have
 setup the following tolerances appropriately:
-CoeffBound: 1.487861000000e+02, DegreeBound: 3.000000000000e+00
+CoeffBound: 2.336178000000e+05, DegreeBound: 2.000000000000e+00
 AMPSafetyDigits1: 1, AMPSafetyDigits2: 1, AMPMaxPrec: 1024
 
-Tracking path 0 of 3
+Tracking path 0 of 32
+Tracking path 20 of 32
+!!!WARNING!!!  Paths 7 and 13 may have crossed!!!
+!!!WARNING!!!  Paths 17 and 1 may have crossed!!!
+!!!WARNING!!!  Paths 19 and 5 may have crossed!!!
+!!!WARNING!!!  Paths 27 and 11 may have crossed!!!
 
 Finite Solution Summary
 
@@ -73,17 +109,36 @@ NOTE: nonsingular vs singular is based on condition number and identical endpoin
 
 		| Number of real solns	|  Number of non-real solns	|  Total
 ------------------------------------------------------------------------------------------
-Non-singular	|	3		|		0		|   3
-Singular	|	0		|		0		|   0
+Non-singular	|	0		|		0		|   0
+Singular	|	1		|		2		|   3
 ------------------------------------------------------------------------------------------
-Total		|	3		|		0		|   3
+Total		|	1		|		2		|   3
 
 
 Finite Multiplicity Summary
 
   Multiplicity	|  Number of real solns	|  Number of non-real solns
 ------------------------------------------------------------------------------------------
-	1	|	3		|	0
+	1	|	1		|	2
+
+
+Infinite Solution Summary
+
+NOTE: nonsingular vs singular is based on condition number and identical endpoints
+
+		| Number of real solns	|  Number of non-real solns	|  Total
+------------------------------------------------------------------------------------------
+Non-singular	|	0		|		0		|   0
+Singular	|	0		|		7		|   7
+------------------------------------------------------------------------------------------
+Total		|	0		|		7		|   7
+
+
+Infinite Multiplicity Summary
+
+  Multiplicity	|  Number of real solns	|  Number of non-real solns
+------------------------------------------------------------------------------------------
+	1	|	0		|	7
 
 
 ------------------------------------------------------------------------------------------
@@ -99,4 +154,12 @@ nonsingular_solutions: A list of all nonsingular solutions.
 singular_solutions:    A list of all singular solutions.
 ------------------------------------------------------------------------------------------
 
-Paths Tracked: 3
+It appears that 4 path crossing(s) occurred prior to t=tEndgame
+
+   Try adjusting TRACKTOLBEFOREEG in the input file
+
+
+Paths Tracked: 32
+ Truncated infinite paths: 22 - try adjusting SecurityMaxNorm or set SecurityLevel to 1 in the input file
+   Please see 'failed_paths' for more information about these paths.
+

@@ -48,10 +48,12 @@ bufferfile.close()
 for i in range(0, len(filenames)):
 	# filename, x[i] - solution sets, 
 	solutions=bertini.getFullSolutions(filenames[i], x[i])
-	out.write(str(solutions))
-	out.write('\n')
+	out.write('File'+str(i+1)+'\n')
+	for solution in solutions:
+	    out.write(str(solution)+'\n')
+	out.write('\n\n')
 
 out.close()
-bertini.deleteFiles(filenames)
+#bertini.deleteFiles(filenames)
 
 

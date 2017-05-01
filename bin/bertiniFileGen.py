@@ -69,13 +69,7 @@ def getFullSolutions(filename, sols):
 	        line=line.replace('%','').replace(';\n','').split('=')
 	        lhs.append(line[0].replace(' ', ''))
 	        rhs.append(line[1])
-	    elif ('=' in line) & ('y' in line) & ('Tot' in line):
-	        parts=line.replace(';','').replace(' ','').replace('\n','').split('=')
-	        consLaws.append(parts[0])
-	        exec(line)
 	    elif ('=' in line) & ('y' in line):
-	        parts=line.replace(';','').replace(' ','').replace('\n','').split('=')
-	        initvars.append(parts[0])
 	        exec(line)
 	cur=[]
 	solsets = []
