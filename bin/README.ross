@@ -1,0 +1,3 @@
+in the /var/www/html/control/bin directory, run the following command:
+
+python runFromFile.py test4.txt constants /home/ross/output.tmp
